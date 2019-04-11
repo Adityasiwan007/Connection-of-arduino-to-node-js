@@ -1,0 +1,44 @@
+<html>
+    <body>
+        <h1>hi, This is my web page test</h1>
+       // <div id="distx"></div>
+        <script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io('http://localhost:8001');
+    //1. 
+    
+    //2. 3. 10.
+    
+    socket.on('Ping', function (data) {
+        document.writeln('Ping : ' + data + '<br />');
+        distance=`<b>Collision Distance</b>: ${data}`
+        document.getElementById("distx").innerHTML=distance;
+    });
+
+    //4.
+    //socket.on('Ping', function (data) {
+    //    document.writeln('Ping : ' + data.myObjectKey + '<br />');
+    //});
+    //5. Calling a function on the server
+    //socket.emit('Pong');
+    //6. Calling a function on the server with a parameter
+    //socket.emit('Pong', 101);
+    //7. Calling a function on the server with an object parameter
+    //socket.emit('Pong', { anotherObjectKey: 102 });
+    //8 Ping Pong
+    //socket.on('Ping', function (data) {
+    //    document.writeln('Ping : ' + data + '<br />');
+    //    data++;
+    //    socket.emit('Pong', data);
+    //});
+    //9 setTimeout
+    //socket.on('Ping', function (data) {
+    //    document.writeln('Ping : ' + data + '<br />');
+    //    data++;
+    //    setTimeout(function () { socket.emit('Pong', data); }, 1000);
+    //});
+    
+ 
+</script>
+    </body>
+</html>

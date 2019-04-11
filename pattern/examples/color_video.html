@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>tracking.js - color with video</title>
+  <link rel="stylesheet" href="assets/demo.css">
+
+  <script src="../build/tracking-min.js"></script>
+   <script src="../node_modules/dat.gui/build/dat.gui.min.js"></script>
+  <script src="assets/stats.min.js"></script>
+  <script src="assets/color_camera_gui.js"></script>
+
+  <style>
+  .demo-container {
+    background-color: black;
+  }
+
+  video, canvas {
+    position: absolute;
+  }
+  
+  </style>
+</head>
+<body style="background-color: black;">
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <div  style="margin-top:1%;">
+<div style="color: white; z-index: +2;top: 0px;position: relative;left:30%;font-size:200%" id="test"></div>
+  <div style="color: white; z-index: +2;top: 0px;position: relative;left:30%;font-size:200%" id="traf"></div>
+  <div style="color: white; z-index: +2;top: 0px;position: relative;left:30%;font-size:200%" id="distx"></div>
+  </div>  
+  <div>
+    <div class="demo-container" style="margin-left:10%;">
+      <video id="video" width="1000" height="530" controls>
+        <source src="assets/minions.mp4" type="video/mp4">
+      </video>
+      <canvas id="canvas" width="800" height="500"></canvas>
+    </div>
+  </div>
+
+  <script>
+    window.onload = function() {
+      var canvas = document.getElementById('canvas');
+      var context = canvas.getContext('2d');
+
+      tracking.ColorTracker.registerColor('black', function(r, g, b) {
+        var dx = r - 255;
+        var dy = g - 255;
+        var dz = b - 255;
+
+        if ((b - g) >= 100 && (r - g) >= 60) {
+          return true;
+        }
+        return dx * dx + dy * dy + dz * dz < 3500;
+      });
+      tracking.ColorTracker.registerColor('green', function(r, g, b) {
+        var dx = r - 255;
+        var dy = g - 0;
+        var dz = b - 128;
+
+        if ((b - g) >= 100 && (r - g) >= 60) {
+          return true;
+        }
+        return dx * dx + dy * dy + dz * dz < 3500;
+      });
+      var tracker = new tracking.ColorTracker(['yellow', 'black','green']);
+      tracker.setMinDimension(5);
+
+      tracking.track('#video', tracker);
+
+      tracker.on('track', function(event) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        event.data.forEach(function(rect) {
+          if (rect.color === 'custom') {
+            rect.color = tracker.customColor;
+          }
+
+          context.strokeStyle = rect.color;
+          context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+          context.font = '11px Helvetica';
+          context.fillStyle = "#fff";
+          context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
+          context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
+        });
+      });
+
+      initGUIControllers(tracker);
+    };
+    
+    setInterval(function(){ 
+      var x = document.getElementById("video");
+      let obj="None",tra="Green"
+      let d=x.currentTime
+      if(x.currentTime >=3 && x.currentTime<=11)
+      {
+        tra="Yellow or Red"
+      }
+      if(d>=3 && d<10)
+      {
+        obj="Vehicle"
+      }
+      if(d>=10 && d<=11)
+      {
+        obj="Vehicle"
+      }
+
+      var socket = io('http://localhost:8001');
+      socket.on('Ping', function (data) {
+        data=parseInt(data)
+        if(data>=100)
+        {
+          distance=`<b>Collision Distance: ${data} cm</b>`
+        }
+        else
+        {
+          distance=`<div id=danger style="position: absolute;right:47.8%;" >
+            <div style="opacity: 0.3;">
+               <img src="assets/danger.jpeg" alt="Denim Jeans" height="500" width="848">
+             </div>
+            <div style="position: absolute;top: 62%;left:16%;opacity: 0.7;">
+               <h3 style="color: red;">Collision Alert: ${data} cm</h3>
+            </div>
+         </div>`
+}
+        document.getElementById("distx").innerHTML=distance;
+        });
+        
+/**
+let data=tra
+if(tra=="Green")
+{
+  distance=`<b>Collision Distance: ${data}</b>`
+}
+else
+{
+  distance=`
+  <div id=danger style="position: absolute;right:47.8%;" >
+      <div style="opacity: 0.3;">
+        <img src="assets/danger.jpeg" alt="Denim Jeans" height="500" width="848">
+      </div>
+        <div style="position: absolute;top: 62%;left:16%;opacity: 0.7;">
+          <h3 style="color: red;">Collision Alert: ${data}</h3>
+        </div>
+  </div>`
+}
+document.getElementById("distx").innerHTML=distance;
+*/
+
+if(tra=="Green")
+{
+  tra=`<b style="color: green;">${tra}</b>`
+}
+else
+{
+  tra=`<b style="color: red;">${tra}</b>`
+}
+
+      tra=`<b>Traffic Light</b>: ${tra}`
+      document.getElementById("traf").innerHTML=tra;
+      obj=`<b style="color: aquamarine;"> ${obj}</b>`;
+      obj=`<b>Obstacle</b>: ${obj}<br>`
+      document.getElementById("test").innerHTML=obj;
+      
+
+     }, 1000);
+  </script>
+  
+
+</div>
+</body>
+</html>

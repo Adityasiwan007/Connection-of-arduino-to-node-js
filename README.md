@@ -25,5 +25,5 @@ Connection of Arduino to Node.js using serial port
  
        npm install socket.io
        
- <b> We haves also used Tracker.js. For more detail visit: https://trackingjs.com </b>
+ <b> I have also used Tracker.js. For more detail visit: https://trackingjs.com </b>
  

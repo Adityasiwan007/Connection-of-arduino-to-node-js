@@ -1,9 +1,9 @@
 # Connection-of-arduino-to-node-js-
 Connection of Arduino to Node.js using serial port
 ## Demo working:
-<img src="demo/demo1.png" width="300">
-<br />
-<img src="demo/demo2.png" width="300">
+<img src="demo/demo1.png" width="440"><img src="demo/demo2.png" width="440">
+
+
 # Steps:<br> 
  <b> 1. Install Node and Express in your folder </b>
 
